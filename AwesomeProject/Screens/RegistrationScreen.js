@@ -1,8 +1,16 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
-import Icon from './add.png'
+import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import Icon from './add.png';
+import { useState } from 'react';
 
 export default function RegistrationScreen() {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const onLogin = () =>{
+        console.log(name, email, password)
+    }
     return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
             <View style={styles.imageContainer}>
             <TouchableOpacity>
@@ -12,13 +20,19 @@ export default function RegistrationScreen() {
             <ScrollView>
             <Text style={styles.title}>Регистрация</Text>
             <View style={styles.container}>
+            <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}
+      >
       <TextInput
         style={[styles.input, styles.notLastInput]}
         placeholder="Логин"
+        value={name}
+        onChangeText={setName}
       />
       <TextInput
         style={[styles.input, styles.notLastInput]}
         placeholder="Адрес электронной почты"
+        value={email}
+        onChangeText={setEmail}
 
       />
       <View  style={styles.passwordContainer}>
@@ -26,18 +40,23 @@ export default function RegistrationScreen() {
         style={[styles.input, styles.lastInput]}
         placeholder="Пароль"
         secureTextEntry={true}
+        value={password}
+        onChangeText={setPassword}
         />
         <TouchableOpacity style={styles.show}><Text style={styles.showText}>Показать</Text></TouchableOpacity>
         </View>
-      <TouchableOpacity style={styles.btn} onPress={() => console.log('Button pressed')}>
+        </KeyboardAvoidingView>
+        {/* <Button title='Зарегистрироваться' style={styles.btn} onPress={onLogin}/> */}
+      <TouchableOpacity style={styles.btn} onPress={onLogin}>
           <Text style={styles.btnText}>Зарегистрироваться</Text>
         </TouchableOpacity>
     <TouchableOpacity style={styles.link} onPress={() => console.log('Button pressed')}>
-          <Text style={styles.btnText}>Уже есть аккаунт? Войти</Text>
+          <Text style={styles.linkText}>Уже есть аккаунт? Войти</Text>
         </TouchableOpacity>
     </View>
     </ScrollView>
         </View>
+        </TouchableWithoutFeedback>
     )
 }
 const styles = StyleSheet.create({
@@ -98,13 +117,20 @@ const styles = StyleSheet.create({
       btnText:{
         fontSize:16,
         textAlign:"center",
-        color:"#000",
+        color:"#fff",
         lineHeight: 19,
         fontFamily: 'Roboto Regular'
       },
       link:{
         paddingBottom:45
       },
+      linkText:{
+        color:"#1B4371",
+        fontSize:16,
+      textAlign:"center",
+      lineHeight: 19,
+      fontFamily: 'Roboto Regular'
+    },
       passwordContainer: {
         position: 'relative',
       },

@@ -1,14 +1,23 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { useState } from 'react';
 export default function LoginScreen() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const onLogin = () =>{
+        console.log(email, password)
+    }
     return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
             <Text style={styles.title}>Войти</Text>
         <ScrollView>
             <View style={styles.container}>
+            <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
       <TextInput
         style={[styles.input, styles.notLastInput]}
         placeholder="Адрес электронной почты"
+        value={email}
+        onChangeText={setEmail}
 
       />
       <View style={styles.passwordContainer}>
@@ -16,20 +25,24 @@ export default function LoginScreen() {
         style={[styles.input, styles.lastInput]}
         placeholder="Пароль"
         secureTextEntry={true}
+        value={password}
+        onChangeText={setPassword}
       />
       <TouchableOpacity style={styles.show}>
         <Text style={styles.showText}>Показать</Text>
           </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.btn} onPress={() => console.log('Button pressed')}>
+    </KeyboardAvoidingView>
+      <TouchableOpacity style={styles.btn} onPress={onLogin}>
           <Text style={styles.btnText}>Войти</Text>
         </TouchableOpacity>
     <TouchableOpacity style={styles.link} onPress={() => console.log('Button pressed')}>
-          <Text style={styles.btnText}>Нет аккаунта? Зарегистрироваться</Text>
+          <Text style={styles.linkText}>Нет аккаунта? Зарегистрироваться</Text>
         </TouchableOpacity>
     </View>
     </ScrollView>
     </View>
+    </TouchableWithoutFeedback>
     )
 }
 const styles = StyleSheet.create({
@@ -91,12 +104,19 @@ const styles = StyleSheet.create({
       btnText:{
         fontSize:16,
         textAlign:"center",
-        color:"#000",
+        color:"#fff",
         lineHeight: 19,
         fontFamily: 'Roboto Regular'
       },
       link:{
         paddingBottom:45
+    },
+    linkText:{
+          color:"#1B4371",
+          fontSize:16,
+        textAlign:"center",
+        lineHeight: 19,
+        fontFamily: 'Roboto Regular'
       },
       passwordContainer: {
         position: 'relative',

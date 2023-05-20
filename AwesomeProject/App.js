@@ -9,6 +9,9 @@ export default function App() {
     'Roboto Regular': require('./fonts/Roboto-Regular.ttf'),
     'Roboto Medium' : require('./fonts/Roboto-Medium.ttf')
   });
+  if (!fontsLoaded) {
+    return null;
+  }
   return (
     <View style={styles.container}>
             <Image source={require('./Screens/BG.png')} style={{position: 'absolute', width:450, height:900}}/>
