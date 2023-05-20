@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
         lineHeight: 35,
         textAlign: 'center',
         paddingBottom: 33,
+        fontFamily: 'Roboto Medium'
     },
     icon: {
         width: 25,
@@ -92,6 +93,7 @@ const styles = StyleSheet.create({
         textAlign:"center",
         color:"#000",
         lineHeight: 19,
+        fontFamily: 'Roboto Regular'
       },
       link:{
         paddingBottom:45
@@ -108,5 +110,6 @@ const styles = StyleSheet.create({
         color:"#1B4371",
         fontSize: 16,
         lineHeight: 19,
+        fontFamily: 'Roboto Regular'
       }
 })
