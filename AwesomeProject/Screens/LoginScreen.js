@@ -99,7 +99,8 @@ const styles = StyleSheet.create({
         paddingBottom: 16,
         paddingLeft: 15,
         backgroundColor: "#FF6C00",
-        marginBottom:30
+        marginBottom:30,
+        borderRadius: 100,
       },
       btnText:{
         fontSize:16,
