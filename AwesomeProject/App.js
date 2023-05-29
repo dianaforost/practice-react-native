@@ -1,15 +1,15 @@
 import 'react-native-gesture-handler';
-// import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Image, ImageBackground } from 'react-native';
-import {Platform} from 'react-native';
+import { StyleSheet, View, ImageBackground, TouchableOpacity } from 'react-native';
 import RegistrationScreen from './Screens/RegistrationScreen'
 import LoginScreen from './Screens/LoginScreen';
 import PostsScreen from './Screens/PostsScreen';
 import Home from './Screens/Home';
+import MapScreen from './Screens/MapScreen';
 import { useFonts } from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from "@react-navigation/stack";
-import { ScrollView } from 'react-native-gesture-handler';
+import { AntDesign } from '@expo/vector-icons'; 
+import CommentsScreen from "./Screens/CommentsScreen";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -33,6 +33,16 @@ export default function App() {
         <MainStack.Screen name='Register' component={RegistrationScreen} style={styles.register}/>
         <MainStack.Screen name="Login" component={LoginScreen} />
       <MainStack.Screen name="Home" component={Home} />
+      <MainStack.Screen name="PostsScreen" component={PostsScreen}/>
+      <MainStack.Screen name="MapScreen" component={MapScreen} options={{headerRight: () => (
+                <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                title="Info"
+                color="#000"
+                style={{ marginRight: 10}}
+                ><AntDesign name="rightcircleo" size={24} color="black" /></TouchableOpacity>
+            ),}}/>
+            <MainStack.Screen name="CommentsScreen" component={CommentsScreen}/>
     </MainStack.Navigator>
     </NavigationContainer>
         </ImageBackground>     
