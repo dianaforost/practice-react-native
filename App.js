@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import { StyleSheet, View, ImageBackground, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ImageBackground, TouchableOpacity, Text } from 'react-native';
 import RegistrationScreen from './Screens/RegistrationScreen'
 import LoginScreen from './Screens/LoginScreen';
 import PostsScreen from './Screens/PostsScreen';
@@ -10,6 +10,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from "@react-navigation/stack";
 import { AntDesign } from '@expo/vector-icons'; 
 import CommentsScreen from "./Screens/CommentsScreen";
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import {store,persistor} from './redux/store'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -20,11 +23,10 @@ export default function App() {
     return null;
   }
   const MainStack = createStackNavigator();
-  return ( <>
+  return ( <Provider store={store}>
+    <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}>
   <View style={styles.container}>
-    {/* <View style={styles.container}> */}
              <ImageBackground resizeMode="cover" source={require('./Screens/BG.png')} style={styles.backgroundImage}>
-     {/* </View> */}
          <NavigationContainer >
       <MainStack.Navigator 
       initialRouteName="Register" 
@@ -47,7 +49,8 @@ export default function App() {
     </NavigationContainer>
         </ImageBackground>     
     </View>
-    </>
+    </PersistGate >
+    </Provider>
   );
 }
 

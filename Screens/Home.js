@@ -12,7 +12,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 export default function Home({route}) {
     const email = route.params.params.email;
-    const name = route.params.params.name;
+    const login = route.params.params.login;
     const navigation = useNavigation();
     // console.log(email, name);
     const Tab = createBottomTabNavigator();
@@ -40,7 +40,7 @@ export default function Home({route}) {
       style: { paddingTop: 10, paddingBottom: 10 }, // Добавление отступов сверху и снизу
     }}
       >
-        <Tab.Screen name="PostsScreen" component={() => <PostsScreen email={email} name={name} />} options={{
+        <Tab.Screen name="PostsScreen" component={() => <PostsScreen email={email} login={login} />} options={{
             headerTitle: "PostsScreen",
             headerTitleContainerStyle: {
               marginLeft: 100,
@@ -71,7 +71,7 @@ export default function Home({route}) {
             },
           }}
         />
-        <Tab.Screen name="ProfileScreen" component={() => <ProfileScreen email={email} name={name} />} />
+        <Tab.Screen name="ProfileScreen" component={() => <ProfileScreen email={email} login={login} />} />
         </Tab.Navigator>
         {/* } */}
 

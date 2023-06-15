@@ -1,23 +1,38 @@
 import { Alert, StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { setStatus } from '../redux/auth/selectors';
+import { loginDB } from '../redux/auth/operations';
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
     const route = useRoute();
+    const dispatch = useDispatch()
+    const status = useSelector(setStatus)
 const userId = route.params?.userId;
 // console.log(userId);
+useEffect(() => {
+  console.log(status);
+  if(status === "isLoggedIn"){
+    navigation.navigate('Home', {
+    screen: 'Login',
+    params: {
+      email: email,
+      password: password,
+    }
+  });
+  }
+}, [status]);
     const onLogin = () =>{
       if( email === "" || password === ""){
         return Alert.alert("Please enter info")
       }
         console.log(email, password);
-        navigation.navigate('Home', {
-          screen: 'Home',
-          params: { email: email,
-          password: password },
-       });
+        dispatch(loginDB({email, password}))
+
     }
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

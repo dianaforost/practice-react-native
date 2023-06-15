@@ -1,0 +1,1 @@
+export const setStatus = state => state.auth.status;
