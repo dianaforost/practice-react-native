@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { registerDB, loginDB } from "./operations";
+import { registerDB, loginDB, signOutUser } from "./operations";
 
 const initialState = {
     login: null,
@@ -34,6 +34,17 @@ export const authSlice = createSlice({
             state.status = 'pending';
         })
         .addCase(loginDB.rejected, (state, action) => {
+            state.status = 'error';
+                state.error = action.payload;
+        })
+        .addCase(signOutUser.fulfilled, (state, action) => {
+                state.email = null;
+                state.status = "isSignedOut";
+        })
+        .addCase(signOutUser.pending, (state, action) => {
+            state.status = 'pending';
+        })
+        .addCase(signOutUser.rejected, (state, action) => {
             state.status = 'error';
                 state.error = action.payload;
         })

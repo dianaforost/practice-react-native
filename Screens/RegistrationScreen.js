@@ -33,15 +33,21 @@ export default function RegistrationScreen() {
       return Alert.alert("Please enter info")
     }
     dispatch(registerDB({login, email, password}))
+    .then((response) => {
+      const { user } = response.payload;
+      if (status === 'isLoggedIn') {
+        navigation.navigate('Home', {
+          screen: 'Register',
+          params: { email: email,
+          password: password,
+          displayName: user.displayName },
+       });
+      }
+    }).catch((error) => {
+      console.log(error);
+      return Alert.alert("Your login, email or password is wrong or already excist")
+    });
     console.log(login, email, password);
-    // navigation.navigate('Home', {
-    //   screen: 'Register',
-    //   params: {
-    //     email: email,
-    //     password: password,
-    //     name: login
-    //   }
-    // });
   }
 
   return (
