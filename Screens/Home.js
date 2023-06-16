@@ -9,19 +9,22 @@ import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NavigationContainer } from '@react-navigation/native';
-
+import { useDispatch, useSelector } from "react-redux";
+import { signOutUser } from "../redux/auth/operations";
+import { setUser } from "../redux/auth/selectors";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../config";
 export default function Home({route}) {
     const email = route.params.params.email;
-    const name = route.params.params.name;
+    const displayName =  route.params.params.displayName;
+    console.log(route.params);
     const navigation = useNavigation();
-    // console.log(email, name);
+    const dispatch = useDispatch()
+
     const Tab = createBottomTabNavigator();
     return(
         <>
         <View style={styles.container}>
-          {/* <NavigationContainer> */}
-
-        {/* {route.name === "ProfileScreen" &&  */}
         <Tab.Navigator initialRouteName="PostsScreen" style={styles.tab} screenOptions={({ route }) => ({
         tabBarIcon: () => {
           if (route.name === "PostsScreen") {
@@ -31,23 +34,20 @@ export default function Home({route}) {
           }else if (route.name === "ProfileScreen") {
             return <Feather name="user" size={24} color="black" />
           }
-          // else if(route.name === "Создать публикацию"){
-          //   return <AntDesign name="delete" size={24} color="black" />
-          // }
         },
     })} 
     tabBarOptions={{
-      style: { paddingTop: 10, paddingBottom: 10 }, // Добавление отступов сверху и снизу
+      style: { paddingTop: 10, paddingBottom: 10 },
     }}
       >
-        <Tab.Screen name="PostsScreen" component={() => <PostsScreen email={email} name={name} />} options={{
+        <Tab.Screen name="PostsScreen" component={() => <PostsScreen  email={email} name={displayName} />} options={{
             headerTitle: "PostsScreen",
             headerTitleContainerStyle: {
               marginLeft: 100,
             },
             headerRight: () => (
                 <TouchableOpacity
-                onPress={() => navigation.goBack()}
+                onPress={() => {navigation.goBack(); dispatch(signOutUser())}}
                 title="Info"
                 color="#000"
                 style={{ marginRight: 10}}
@@ -71,43 +71,8 @@ export default function Home({route}) {
             },
           }}
         />
-        <Tab.Screen name="ProfileScreen" component={() => <ProfileScreen email={email} name={name} />} />
+        <Tab.Screen name="ProfileScreen" component={() => <ProfileScreen email={email} name={displayName} />} />
         </Tab.Navigator>
-        {/* } */}
-
-        {/* <Tab.Screen name="PostsScreen" component={() => <PostsScreen email={email} name={name} />} options={{
-            headerTitle: "PostsScreen",
-            headerTitleContainerStyle: {
-              marginLeft: 100,
-            },
-            headerRight: () => (
-                <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                title="Info"
-                color="#000"
-                style={{ marginRight: 10}}
-                ><AntDesign name="rightcircleo" size={24} color="black" /></TouchableOpacity>
-            ),
-            headerTitleStyle: {
-              fontWeight: "bold",
-              textAlign: "center"
-            },
-            }} >
-            </Tab.Screen>
-        <Tab.Screen name="Создать публикацию" component={CreatePostsScreen} options={{headerLeft: () => (
-                <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                title="Info"
-                color="#000"
-                style={{ marginRight: 10}}
-                ><AntDesign name="left" size={24} color="black" style={{marginLeft:16}}/></TouchableOpacity>
-            ), headerTitleContainerStyle: { 
-              marginRight: 16
-            }
-          }}
-        />
-        <Tab.Screen name="ProfileScreen" component={PostsScreen} /> */}
-        {/* </NavigationContainer> */}
         </View>
         </>
     )

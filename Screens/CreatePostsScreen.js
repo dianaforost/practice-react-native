@@ -6,22 +6,25 @@ import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 import { useNavigation } from '@react-navigation/native';
+import { db } from "../config";
+import { collection, addDoc, getDocs, doc } from "firebase/firestore";
 
 
 export default function CreatePostsScreen(){
     const [title, setTitle] = useState("");
     const [loc, setLoc] = useState ("")
   const [location, setLocation] = useState("");
-  // console.log(location);
+
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [capturedImage, setCapturedImage] = useState(null); 
+  const [postId, setPostId] = useState(null); 
   const navigation = useNavigation();
-  // console.log(capturedImage);
+
   useEffect(() =>{
     (async () =>{
-      const { status } = await Camera.requestPermissionsAsync();
+      const { status } = await Camera.requestCameraPermissionsAsync();
       await MediaLibrary.requestPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
@@ -37,15 +40,34 @@ export default function CreatePostsScreen(){
         longitude: coords.longitude,
       };
       setLocation(location);
-      // console.log(location);
-  
+
+      function writeUserData(title, location, photo, loc, postId) {
+        try{
+          const docRef = addDoc(collection(db, 'users'), {
+            title: title,
+            location: location,
+            photo : photo,
+            loc:loc
+          });
+          const postId = docRef.id; 
+          console.log(docRef);
+          setPostId(postId)
+        }
+        catch(e){
+          console.error('Error adding document: ', e);
+            throw e;
+        }
+      }
+      writeUserData(title, location, capturedImage, loc, postId)
+      
       navigation.navigate('PostsScreen', {
         screen: 'PostsScreen',
         params: {
           title: title,
           location: location,
           loc: loc,
-          photo: capturedImage
+          photo: capturedImage,
+          postId: postId,
         }
       });
     }
@@ -56,7 +78,7 @@ export default function CreatePostsScreen(){
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
-  //   const Main = createBottomTabNavigator();
+
   const onChangeLocation = (text) =>{
       setLoc(text);
     }
@@ -81,15 +103,10 @@ export default function CreatePostsScreen(){
                 const { uri } = await cameraRef.takePictureAsync();
                 await MediaLibrary.createAssetAsync(uri);
                 setCapturedImage(uri);
-                // console.log(capturedImage);
               }
             }}
             ><View style={styles.imageCont}><Entypo name="camera" size={24} color="#fff" /></View>
           </TouchableOpacity>
-            {/* <View style={styles.imageCont}><Entypo name="camera" size={24} color="#BDBDBD" /></View> */}
-            {/* <View style={styles.takePhotoOut}>
-              <View style={styles.takePhotoInner}></View>
-            </View> */}
           <TouchableOpacity
             style={styles.flipContainer}
             onPress={() => {
@@ -132,9 +149,6 @@ export default function CreatePostsScreen(){
           </ScrollView>
           <Image source={{ uri: capturedImage }}></Image>
         </View>
-        {/* <Main.Navigator>
-            <Main.Screen name="ProfileScreen" component={PostsScreen}></Main.Screen>
-          </Main.Navigator> */}
         </TouchableWithoutFeedback>
     )
   }
@@ -142,7 +156,6 @@ export default function CreatePostsScreen(){
     container:{
       flex:1,
       display:"flex",
-      // alignItems:"center",
       paddingLeft:16,
       paddingRight:16,
       backgroundColor: "#FFFFFF",
@@ -152,7 +165,6 @@ export default function CreatePostsScreen(){
     },
     imageCont:{
       padding: 18,
-      // borderRadius:"50",
       backgroundColor:"#FFFFFF30",
       borderRadius: 50,
       top:20
@@ -161,7 +173,6 @@ export default function CreatePostsScreen(){
       paddingTop: 16,
       paddingBottom: 15,
       paddingLeft: 16,
-      // backgroundColor: "#F6F6F6",
       borderBottomColor:"#E8E8E8",
       borderBottomWidth:1,
       marginBottom: 16
@@ -177,8 +188,6 @@ export default function CreatePostsScreen(){
       paddingBottom: 15,
       paddingLeft: 16,
       flex: 1,
-      // backgroundColor: "#F6F6F6",
-      // marginBottom: 32
     },
     btn: {
       paddingTop: 16,
@@ -197,7 +206,7 @@ export default function CreatePostsScreen(){
         fontFamily: 'Roboto Regular'
       },
       disabledBtn: {
-        backgroundColor: "#CCC", // Цвет кнопки при отключенном состоянии
+        backgroundColor: "#CCC",
       },
       cont: { flex: 2 },
       camera: { 
@@ -243,55 +252,3 @@ export default function CreatePostsScreen(){
         borderRadius: 50,
       },
 })
-        // const onPublish = async () => {
-          //   navigation.navigate('PostsScreen', {
-            //     screen: 'PostsScreen',
-        //     params: {
-          //       title: title,
-          //       location: location
-          //     }
-          //   });
-          
-          //   const { status } = await Location.requestForegroundPermissionsAsync();
-          //   if (status !== "granted") {
-            //     console.log("Permission to access location was denied");
-        //   } else {
-          //     let location = await Location.getCurrentPositionAsync({});
-          //     const coords = {
-            //       latitude: location.coords.latitude,
-        //       longitude: location.coords.longitude,
-        //     };
-        //     setLocation(coords);
-        //     console.log(location);
-        //   }
-        // };
-
-
-
-        
-        // const onPublish = () =>{
-        //   (async () =>{
-        //     const { status } =  Location.requestForegroundPermissionsAsync();
-        //     if (status !== "granted") {
-        //       console.log("Permission to access location was denied");
-        //     }
-        //     let location = Location.getCurrentPositionAsync({});
-        //     const coords = {
-        //       latitude: location.coords.latitude,
-        //       longitude: location.coords.longitude,
-        //     };
-        //     setLocation(coords);
-        //     console.log(location);
-        //     console.log(coords);
-        //   })
-        //   ();
-        //   navigation.navigate('PostsScreen', {
-        //     screen: 'PostsScreen',
-        //     params: {
-        //       title: title,
-        //       location: location,
-        //       loc: loc,
-        //       photo: capturedImage
-        //     }
-        //   });
-        // }
