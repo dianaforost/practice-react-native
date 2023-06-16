@@ -1,31 +1,40 @@
-import { View, StyleSheet, Text, Image, ImageBackground, TouchableOpacity } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import { View, StyleSheet, Text, Image, ImageBackground, TouchableOpacity, ScrollView } from "react-native";
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { useState, useEffect, useRef } from 'react';
 import { EvilIcons } from '@expo/vector-icons'; 
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../config";
 
-export default function PostsScreen({ email, name }) {
+export default function PostsScreen({ email, name, pos }) {
   const navigation = useNavigation();
   const route = useRoute();
-  let posts = [];
+  const [posts, setPost] = useState([])
+  const [postId, setPostId] = useState();
+
   let location;
 
-  // console.log(route);
-  // useEffect(() =>{
-  //   (async () =>{
-    if (route.params !== undefined) {
-        const newPost = {
-          title: route.params.params.title,
-          location: route.params.params.location,
-          photo: route.params.params.photo,
-          loc:route.params.params.loc
-        } 
-        
-        posts.push(newPost);
-        // console.log(posts);
-              // console.log(posts.photo);
-            }
+  const getDataFromFirestore = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, 'users'));
+      const dts = snapshot.forEach((doc) =>{ 
+        const ds = doc.data()
+        setPostId(doc.id)
+        const locaion = ds.location
+        const title = ds.title;
+        const photo = ds.photo
+        setPost((prevPosts) => [...prevPosts, { locaion, title, photo }]);
+      })
+      return dts
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+  useEffect(() => {
+    getDataFromFirestore()
+  }, []);
+
             const handleIconPress = () => {
               navigation.navigate('MapScreen', {
                 screen : 'PostsScreen',
@@ -34,15 +43,15 @@ export default function PostsScreen({ email, name }) {
             }
           })
         };
-        const onComment = () =>{
+        const onComment = (photo) =>{
           navigation.navigate('CommentsScreen', {
             screen : 'PostsScreen',
             params :{
-              photo: route.params.params.photo
+              photo: photo,
+              postId: postId
             }
           })
         }
-      
         return (
           <>
       <View style={styles.container}>
@@ -63,10 +72,8 @@ export default function PostsScreen({ email, name }) {
             )}
           </View>
         </View>
+              <ScrollView>
         <View style={styles.postsContainer}>
-            {route.params === undefined ? (
-              <Text>There are no posts</Text>
-              ) : (
               <>
                 {posts.map((post, index) => (
                   <View key={index}>
@@ -74,7 +81,7 @@ export default function PostsScreen({ email, name }) {
                     <Text style={{fontWeight: 500,fontSize: 16}}>{post.title}</Text>
                     <View style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
                     <View style={{display:"flex", flexDirection:"row", width:"50%"}}>
-                    <TouchableOpacity onPress={onComment} style={{display:"flex", flexDirection:"row"}}>
+                    <TouchableOpacity onPress={() => onComment(post.photo)} style={{display:"flex", flexDirection:"row"}}>
                     <EvilIcons name="comment" size={24} color="black" />
                     <Text>0</Text>
                     </TouchableOpacity>
@@ -89,9 +96,10 @@ export default function PostsScreen({ email, name }) {
                   </View>
                 ))}
               </>
-            )}
+            
 
         </View>
+                </ScrollView>
       </View>
     </>
   );
@@ -99,21 +107,15 @@ export default function PostsScreen({ email, name }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // height:"100%",
     paddingLeft: 16,
     paddingRight:16,
     display:"flex",
     flexDirection:"column",
     backgroundColor: "#FFFFFF",
-    //   backgroundColor:"red",
-    // backgroundColor: "#ffd1d1",
-    // alignItems: 'start',
-    // justifyContent: "",
-    // paddingBottom: Platform.OS === 'ios' ? 0 : Keyboard.dismiss,
   },
   mapContainer: {
     width: "100%",
-      height: 500, // Задайте желаемую высоту карты
+      height: 500,
       justifyContent: 'flex-end',
       alignItems: 'center',
     },
@@ -127,11 +129,9 @@ const styles = StyleSheet.create({
     cont:{
       display:"flex",
       flexDirection:"row",
-      // justifyContent:"flex-end"
     },
     textContainer:{
       display:"flex",
-      // justifyContent:"center"
     },
     nameText:{
       fontFamily: 'Roboto Medium',
@@ -153,95 +153,7 @@ const styles = StyleSheet.create({
       width:100
     },
     postsContainer:{
-      // backgroundColor:"black"
     }
   });
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  //   })();
-  // },[])
-  // if (route.params !== undefined) {
-  //   const newPost = {
-  //     title: route.params.params.title,
-  //     location: route.params.params.location,
-  //     photo: route.params.params.photo
-  //   } 
-    
-  //   posts.push(newPost)
-  //         // console.log(posts.photo);
-  //       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // export default function PostsScreen({email, name}) {
-  //   const route = useRoute()
-  // let posts = [];
-  // console.log(route);
-  // if(route.params !== undefined){
-  //   posts = [{
-  //     title : route.params.params.title,
-  //     location : route.params.params.location
-  //   },
-  // {
-  //   title: "Hailine",
-  //   location:"NewYork"
-  // }]
-  //   console.log(posts);
-  //   }
-  //   // console.log(title, location);
-  //     // console.log(email, name);
-  //     return <>
-  //     <View style={styles.container}>
-  //       <View style={styles.cont}>
-  //       <Image source={require('../images/Rectangle.png')} style={styles.image}/>
-  //       <View style={styles.textContainer}>
-  //         {!name && <View style={styles.anotherContainer}><Text style={styles.nameText}>{email}</Text><Text>{email}</Text></View>}
-  //         {name && <View style={styles.textContainer}><Text style={styles.nameText}>{name}</Text>
-  //         <Text>{email}</Text></View>}
-  //         {route.params === undefined ? <Text>There is no posts</Text> : (
-  //           {posts.map(post => {
-  //             return (
-  //               <View key={post.title}>
-  //                 <Text>{post.title}</Text>
-  //                 <Text>{post.location}</Text>
-  //               </View>
-  //             );
-  //           })}
-  //           )}
-  //         </View>
-  //         </View>
-  //     </View>
-  //     </>
-  // }
-  
-  
-  
-  // <View>
-    // {posts.map(post =>{ return <View><Text>{post.title}</Text>
-    // <Text>{post.location}</Text></View>})}
-  // </View>

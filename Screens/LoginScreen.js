@@ -3,24 +3,31 @@ import { useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { setStatus } from '../redux/auth/selectors';
+import { setStatus, setUser } from '../redux/auth/selectors';
 import { loginDB } from '../redux/auth/operations';
 export default function LoginScreen() {
+  const [displayName, setDisplayName] = useState('')
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const navigation = useNavigation();
     const route = useRoute();
     const dispatch = useDispatch()
-    const status = useSelector(setStatus)
-const userId = route.params?.userId;
-useEffect(() => {
-  console.log(status);
-  if(status === "isLoggedIn"){
+    const status = useSelector(setStatus || "waiting")
+    const login = useSelector(setUser)
+
+    const userId = route.params?.userId;
+
+    useEffect(() => {
+      console.log(status);
+      if(status === "isLoggedIn"){
+    console.log(displayName);
     navigation.navigate('Home', {
     screen: 'Login',
     params: {
       email: email,
       password: password,
+      displayName: displayName
     }
   });
   }
@@ -29,18 +36,13 @@ useEffect(() => {
       if( email === "" || password === ""){
         return Alert.alert("Please enter info")
       }
-        console.log(email, password);
+
         dispatch(loginDB({ email, password }))
         .then((response) => {
           const { user } = response.payload;
-          console.log(user);
+
           if (status === 'isLoggedIn') {
-            navigation.navigate('Home', {
-              screen: 'Login',
-              params: { email: email,
-              password: password,
-              displayName: user.displayName },
-           });
+            setDisplayName(user.displayName)
           }
         })
         .catch((error) => {
@@ -67,11 +69,11 @@ useEffect(() => {
       <TextInput
         style={[styles.input, styles.lastInput]}
         placeholder="Пароль"
-        secureTextEntry={true}
+        secureTextEntry={!showPassword}
         value={password}
         onChangeText={setPassword}
       />
-      <TouchableOpacity style={styles.show}>
+      <TouchableOpacity style={styles.show} onPress={() => setShowPassword(!showPassword)}>
         <Text style={styles.showText}>Показать</Text>
           </TouchableOpacity>
       </View>
@@ -97,18 +99,10 @@ const styles = StyleSheet.create({
   paddingLeft: 16,
   paddingRight: 16,
   paddingTop: 32,
-        // display:"flex",
         width: "100%",
         height: "100%",
-        // backgroundColor:"#FFFFFF",
-        // borderTopLeftRadius: 25,
-        // borderTopRightRadius: 25,
-        // paddingLeft: 16,
-        // paddingRight:16,
-        // paddingTop: 32,
     },
     imageContainer:{
-        // flex: 1,
         left:"35%",
         top: -60,
         width:120,

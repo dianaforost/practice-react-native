@@ -7,9 +7,8 @@ import { AntDesign } from '@expo/vector-icons';
 
 export default function MapScreen(){
     const navigation = useNavigation();
-    // const [showMap, setShowMap] = useState(false);
     const route = useRoute();
-    // console.log(route.params);
+
 
     return (<>
     <View style={styles.container}>
@@ -47,17 +46,10 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
     },
-    // icon: {
-    //   width: 50,
-    //   height: 50,
-    // },
+  
     header: {
         flexDirection: 'row',
         top:70,
-        // alignItems: 'center',
-        // paddingHorizontal: 10,
-        // paddingTop: 10,
-        // flex:3
       },
       title: {
         fontSize: 18,
@@ -65,7 +57,6 @@ const styles = StyleSheet.create({
         marginLeft: 20,
       },
     mapContainer: {
-    //   ...StyleSheet.absoluteFillObject,
       height: 800,
       width:"100%",
       top: 90,

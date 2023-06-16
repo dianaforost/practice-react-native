@@ -9,12 +9,14 @@ import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NavigationContainer } from '@react-navigation/native';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { signOutUser } from "../redux/auth/operations";
+import { setUser } from "../redux/auth/selectors";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../config";
 export default function Home({route}) {
     const email = route.params.params.email;
-    const displayName = route.params.params.displayName;
-    console.log(displayName);
+    const displayName =  route.params.params.displayName;
     console.log(route.params);
     const navigation = useNavigation();
     const dispatch = useDispatch()
@@ -38,7 +40,7 @@ export default function Home({route}) {
       style: { paddingTop: 10, paddingBottom: 10 },
     }}
       >
-        <Tab.Screen name="PostsScreen" component={() => <PostsScreen email={email} name={displayName} />} options={{
+        <Tab.Screen name="PostsScreen" component={() => <PostsScreen  email={email} name={displayName} />} options={{
             headerTitle: "PostsScreen",
             headerTitleContainerStyle: {
               marginLeft: 100,
@@ -69,7 +71,7 @@ export default function Home({route}) {
             },
           }}
         />
-        <Tab.Screen name="ProfileScreen" component={() => <ProfileScreen email={email} login={login} />} />
+        <Tab.Screen name="ProfileScreen" component={() => <ProfileScreen email={email} name={displayName} />} />
         </Tab.Navigator>
         </View>
         </>

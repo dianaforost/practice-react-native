@@ -9,6 +9,7 @@ export default function RegistrationScreen() {
   const [login, setLogin] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
   const dispatch = useDispatch()
@@ -22,7 +23,7 @@ export default function RegistrationScreen() {
       params: {
         email: email,
         password: password,
-        login: login
+        // displayName: login
       }
     });
     }
@@ -35,19 +36,19 @@ export default function RegistrationScreen() {
     dispatch(registerDB({login, email, password}))
     .then((response) => {
       const { user } = response.payload;
-      if (status === 'isLoggedIn') {
+      if (status === 'isRegistered') {
         navigation.navigate('Home', {
           screen: 'Register',
           params: { email: email,
           password: password,
-          displayName: user.displayName },
+          // displayName: user.displayName 
+        },
        });
       }
     }).catch((error) => {
       console.log(error);
-      return Alert.alert("Your login, email or password is wrong or already excist")
+      return Alert.alert("Your login, email or password is wrong or already exists")
     });
-    console.log(login, email, password);
   }
 
   return (
@@ -77,11 +78,11 @@ export default function RegistrationScreen() {
               <TextInput
                 style={[styles.input, styles.lastInput]}
                 placeholder="Пароль"
-                secureTextEntry={true}
+                secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={setPassword}
               />
-              <TouchableOpacity style={styles.show}>
+              <TouchableOpacity style={styles.show} onPress={() => setShowPassword(!showPassword)}>
                 <Text style={styles.showText}>Показать</Text>
               </TouchableOpacity>
             </View>
